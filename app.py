@@ -108,7 +108,7 @@ def eliminar_receta(id):
     return redirect(url_for("home"))
 
 # -----------------------
-# Ejecutar app
+#  Ejecutar app
 # -----------------------
 if __name__ == "__main__":
     app.run(debug=True)
