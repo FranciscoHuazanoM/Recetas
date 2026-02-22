@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="card" style="border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.08);">
+
+    <!-- Header -->
+    <header class="card-header">
+      <p class="card-header-title is-size-4">
+        {{ receta.titulo }}
+      </p>
+    </header>
+
+    <!-- Contenido -->
+    <div class="card-content">
+
+      <!-- Etiquetas -->
+      <div class="tags mb-4">
+        <span class="tag is-info is-light">
+          {{ receta.categoria or "Sin categoría" }}
+        </span>
+
+        <span class="tag is-link is-light">
+          ⏱ {{ receta.tiempo_min or 0 }} min
+        </span>
+
+        <span class="tag is-warning is-light">
+          🍽 {{ receta.porciones or 0 }} porciones
+        </span>
+      </div>
+
+      <!-- Ingredientes -->
+      <h3 class="title is-5">Ingredientes</h3>
+      <div class="content box" style="white-space: pre-line;">
+        {{ receta.ingredientes or "—" }}
+      </div>
+
+      <!-- Instrucciones -->
+      <h3 class="title is-5 mt-5">Instrucciones</h3>
+      <div class="content box" style="white-space: pre-line;">
+        {{ receta.instrucciones or "—" }}
+      </div>
+
+      <!-- Botones -->
+      <div class="buttons mt-5 is-justify-content-space-between">
+        <a class="button is-light" href="{{ url_for('home') }}">
+          ← Volver
+        </a>
+
+        <a class="button is-warning" href="{{ url_for('editar_receta', id=receta.id) }}">
+          Editar
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
