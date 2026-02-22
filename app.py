@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 # -----------------------
 app = Flask(__name__)
 
-# 🔥 CONEXIÓN DIRECTA A POSTGRESQL (Render)
+# 🔥 CONEXIÓN A POSTGRESQL (Render)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://crud_alumnos_2026_user:1calS9AaCgbDv8Lms5Jzfo4PMNFQVvrn@dpg-d6ai0kfgi27c73b7ibeg-a.oregon-postgres.render.com/crud_alumnos_2026"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -18,11 +18,12 @@ db = SQLAlchemy(app)
 # -----------------------
 class Receta(db.Model):
     __tablename__ = 'recetas'
+
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(120), nullable=False)
     categoria = db.Column(db.String(60))
-    tiempo_min = db.Column(db.Integer)
-    porciones = db.Column(db.Integer)
+    tiempo_min = db.Column(db.Integer, default=0)
+    porciones = db.Column(db.Integer, default=0)
     ingredientes = db.Column(db.Text)
     instrucciones = db.Column(db.Text)
 
@@ -41,13 +42,16 @@ def no_cache(response):
     return response
 
 # -----------------------
-# Rutas
+# RUTA PRINCIPAL
 # -----------------------
 @app.route("/")
 def home():
     recetas = Receta.query.order_by(Receta.id.desc()).all()
     return render_template("index.html", recetas=recetas)
 
+# -----------------------
+# CREAR RECETA
+# -----------------------
 @app.route("/recetas/nueva", methods=["GET", "POST"])
 def nueva_receta():
     if request.method == "POST":
@@ -62,16 +66,24 @@ def nueva_receta():
         db.session.add(receta)
         db.session.commit()
         return redirect(url_for("home"))
+
     return render_template("nueva_receta.html")
 
+# -----------------------
+# VER RECETA  ✅
+# -----------------------
 @app.route("/recetas/<int:id>")
 def ver_receta(id):
     receta = Receta.query.get_or_404(id)
     return render_template("ver_receta.html", receta=receta)
 
+# -----------------------
+# EDITAR RECETA
+# -----------------------
 @app.route("/recetas/<int:id>/editar", methods=["GET", "POST"])
 def editar_receta(id):
     receta = Receta.query.get_or_404(id)
+
     if request.method == "POST":
         receta.titulo = request.form["titulo"].strip()
         receta.categoria = request.form.get("categoria", "").strip()
@@ -79,10 +91,15 @@ def editar_receta(id):
         receta.porciones = int(request.form.get("porciones") or 0)
         receta.ingredientes = request.form.get("ingredientes", "").strip()
         receta.instrucciones = request.form.get("instrucciones", "").strip()
+
         db.session.commit()
         return redirect(url_for("home"))
+
     return render_template("editar_receta.html", receta=receta)
 
+# -----------------------
+# ELIMINAR RECETA
+# -----------------------
 @app.route("/recetas/<int:id>/eliminar", methods=["POST"])
 def eliminar_receta(id):
     receta = Receta.query.get_or_404(id)
