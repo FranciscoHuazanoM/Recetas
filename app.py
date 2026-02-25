@@ -50,7 +50,7 @@ def home():
     return render_template("index.html", recetas=recetas)
 
 # -----------------------
-# CREAR RECETA
+# CREAR  RECETA
 # -----------------------
 @app.route("/recetas/nueva", methods=["GET", "POST"])
 def nueva_receta():
